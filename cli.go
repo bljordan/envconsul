@@ -389,6 +389,11 @@ func (cli *CLI) ParseFlags(args []string) (*Config, []string, bool, bool, error)
 	}), "pristine", "")
 
 	flags.Var((funcVar)(func(s string) error {
+		c.EnvPrefix = config.String(s)
+		return nil
+	}), "env-prefix", "")
+
+	flags.Var((funcVar)(func(s string) error {
 		sig, err := signals.Parse(s)
 		if err != nil {
 			return err
@@ -782,6 +787,10 @@ Options:
   -pristine
       Only use values retrieved from prefixes and secrets, do not inherit the
       existing environment variables
+
+
+  -env-prefix=<prefix>
+      Adds the provided prefix to variables added to the environment.
 
   -reload-signal=<signal>
       Signal to listen to reload configuration

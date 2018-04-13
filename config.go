@@ -64,6 +64,10 @@ type Config struct {
 	// environment
 	Pristine *bool `mapstructure:"pristine"`
 
+	// EnvPrefix is an optional prefix which will be added to each
+	// variable set in the environment.
+	EnvPrefix *string `mapstructure:"env_prefix"`
+
 	// ReloadSignal is the signal to listen for a reload event.
 	ReloadSignal *os.Signal `mapstructure:"reload_signal"`
 
@@ -114,6 +118,8 @@ func (c *Config) Copy() *Config {
 	}
 
 	o.Pristine = c.Pristine
+
+	o.EnvPrefix = c.EnvPrefix
 
 	o.Sanitize = c.Sanitize
 
@@ -186,6 +192,10 @@ func (c *Config) Merge(o *Config) *Config {
 
 	if o.Pristine != nil {
 		r.Pristine = o.Pristine
+	}
+
+	if o.EnvPrefix != nil {
+		r.EnvPrefix = o.EnvPrefix
 	}
 
 	if o.Sanitize != nil {
@@ -493,6 +503,7 @@ func (c *Config) GoString() string {
 		"PidFile:%s, "+
 		"Prefixes:%s, "+
 		"Pristine:%s, "+
+		"EnvPrefix:%s, "+
 		"ReloadSignal:%s, "+
 		"Sanitize:%s, "+
 		"Secrets:%s, "+
@@ -509,6 +520,7 @@ func (c *Config) GoString() string {
 		config.StringGoString(c.PidFile),
 		c.Prefixes.GoString(),
 		config.BoolGoString(c.Pristine),
+		config.StringGoString(c.EnvPrefix),
 		config.SignalGoString(c.ReloadSignal),
 		config.BoolGoString(c.Sanitize),
 		c.Secrets.GoString(),
@@ -575,6 +587,10 @@ func (c *Config) Finalize() {
 
 	if c.Pristine == nil {
 		c.Pristine = config.Bool(false)
+	}
+
+	if c.EnvPrefix == nil {
+		c.EnvPrefix = config.String("")
 	}
 
 	if c.ReloadSignal == nil {

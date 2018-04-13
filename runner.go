@@ -429,18 +429,18 @@ func (r *Runner) appendSecrets(
 			continue
 		}
 
-		if !config.BoolVal(cp.NoPrefix) {
-			// Replace the path slashes with an underscore.
-			pc, ok := r.configPrefixMap[d.String()]
-			if !ok {
-				return fmt.Errorf("missing dependency %s", d)
-			}
+		// if !config.BoolVal(cp.NoPrefix) {
+		// 	// Replace the path slashes with an underscore.
+		// 	pc, ok := r.configPrefixMap[d.String()]
+		// 	if !ok {
+		// 		return fmt.Errorf("missing dependency %s", d)
+		// 	}
 
-			path := InvalidRegexp.ReplaceAllString(config.StringVal(pc.Path), "_")
+		// 	path := InvalidRegexp.ReplaceAllString(config.StringVal(pc.Path), "_")
 
-			// Prefix the key value with the path value.
-			key = fmt.Sprintf("%s_%s", path, key)
-		}
+		// 	// Prefix the key value with the path value.
+		// 	key = fmt.Sprintf("%s_%s", path, key)
+		// }
 
 		// If the user specified a custom format, apply that here.
 		if config.StringPresent(cp.Format) {
@@ -456,6 +456,10 @@ func (r *Runner) appendSecrets(
 
 		if config.BoolVal(r.config.Upcase) {
 			key = strings.ToUpper(key)
+		}
+
+		if config.StringVal(r.config.EnvPrefix) != "" {
+			key = config.StringVal(r.config.EnvPrefix) + key
 		}
 
 		if current, ok := env[key]; ok {
